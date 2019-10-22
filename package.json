@@ -3,7 +3,8 @@
   "description": "a really cool app",
   "version": "0.0.1",
   "scripts": {
-    "start": "node server.js"    
+    "start": "node server.js",
+    "heroku-postbuild": "ng build --prod"
   },
   "engines": {
     "node": "12.13.0",
