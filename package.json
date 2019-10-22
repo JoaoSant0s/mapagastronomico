@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "ng build --aot --prod"
+    "heroku-postbuild": "ng build --prod"
   },
   "engines": {
     "node": "12.13.0",
@@ -12,5 +12,9 @@
   },
   "dependencies": {
     "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@angular/cli": "^8.3.12",
+    "@angular/compiler-cli": "^8.2.11"
   }
 }
