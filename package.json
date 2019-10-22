@@ -2,12 +2,15 @@
   "name": "myapp",
   "description": "a really cool app",
   "version": "0.0.1",
-  "scripts": {   
-   "start": "node server.js",
-   "postinstall": "ng build --aot --prod"
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "ng build --aot --prod"
   },
   "engines": {
-   "node": "12.13.0",
-   "npm": "6.12.0"
+    "node": "12.13.0",
+    "npm": "6.12.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
   }
 }
