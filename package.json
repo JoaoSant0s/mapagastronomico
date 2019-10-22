@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "ng build --prod"
+    "postinstall": "ng build --aot --prod"
   },
   "engines": {
     "node": "12.13.0",
