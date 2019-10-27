@@ -13,17 +13,13 @@ if (!String.prototype.format) {
     };
 }
 
-function init() {
-    console.log("init");
-
+function init() {    
     var map = initMap()
 
     initMarkets(map);
 }
 
-function initMap() {
-    console.log("initMap");
-
+function initMap() {    
     var uluru = { lat: -8.05428, lng: -34.8813 };
     var zoom = 14;
 
@@ -258,9 +254,8 @@ function initMap() {
     return map;
 }
 
-function initMarkets(map) {
-    console.log("initMarkets");
-    var marketsDefinition = [
+function initMarkets(map) {    
+var marketsDefinition = [
         {
         content: {
             title: "Teste 1",
@@ -298,16 +293,13 @@ function initMarkets(map) {
     }
 }
 
-function createMarket(marketData, map) {
-    console.log("createMarket");
-    var marker = new google.maps.Marker({ position: marketData.position, map: map });
+function createMarket(marketData, map) {    
+var marker = new google.maps.Marker({ position: marketData.position, map: map });
 
     attachMessage(marker, marketData.content);
 }
 
-function attachMessage(marker, content) {
-    console.log("attachMessage");
-
+function attachMessage(marker, content) {    
     var infowindow = new google.maps.InfoWindow({
         content: defaultContent.format(content.title, content.body)
     });
@@ -329,9 +321,8 @@ function fixInfoWindowCloseButton() {
 
         if(value){
             value.style.top = '0px';
-            value.style.right = '0px';
-            console.log(value);
-            var img = value.querySelector('img');
+            value.style.right = '0px';            
+        var img = value.querySelector('img');
             if(img){
             img.style.width= '20px';
             img.style.height= '20px';
