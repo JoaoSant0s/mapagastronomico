@@ -1,6 +1,8 @@
 var defaultContent = '<div id="content"><h1 id="firstHeading" class="firstHeading"> {0} </h1> <div id="bodyContent"> {1} </div></div>';
 var infowindows = [];
 
+var firebaseWrapper = new FirebaseWrapper();
+
 if (!String.prototype.format) {
   String.prototype.format = function () {
     var args = arguments;
@@ -222,53 +224,15 @@ function initMap() {
 }
 
 function initMarkets(map) {
-  var marketsDefinition = [{
-      content: {
-        title: "Teste 1",
-        body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam suscipit leo at leo mattis varius. Phasellus sem lorem, porta id fringilla eget, porta eget justo. Ut ultrices placerat faucibus. Duis consectetur tempor eros, non molestie lorem tincidunt vitae. Donec suscipit auctor risus et aliquam. Sed elementum non est sed fermentum. Pellentesque non nulla finibus tortor posuere porttitor auctor a neque. Donec sit amet nulla sodales, ullamcorper tortor nec, luctus magna. Donec sit amet risus consectetur, accumsan orci nec, aliquam massa. Donec consectetur, ipsum sed varius fringilla, leo velit commodo mauris, at eleifend nisl leo at risus. Quisque et hendrerit neque. Vivamus fringilla tellus at lectus vestibulum, id blandit nulla faucibus.'
-      },
-      position: {
-        lat: -8.055,
-        lng: -34.8813
-      }
-    },
-    {
-      content: {
-        title: "Teste 2",
-        body: 'Maecenas a sem nec tortor dapibus molestie non sit amet metus. Praesent lacus neque, varius sed convallis eu, euismod in lacus. Nam nec nisl vitae orci maximus tempor. Suspendisse potenti. Vivamus maximus mauris ac laoreet pulvinar. Morbi venenatis finibus ligula. Donec ullamcorper id risus nec hendrerit. Donec auctor lorem in massa aliquam aliquet. Donec venenatis euismod mattis. In scelerisque nulla vehicula imperdiet lacinia. Maecenas posuere in nulla a volutpat. Suspendisse est lacus, faucibus sed venenatis sit amet, dapibus quis arcu. Pellentesque scelerisque fermentum tortor, a sagittis quam.'
-      },
-      position: {
-        lat: -8.0542,
-        lng: -34.91
-      }
-    },
-    {
-      content: {
-        title: "Teste 3",
-        body: 'Maecenas fringilla efficitur finibus. Aenean augue orci, ultrices sit amet mattis in, mattis sed arcu. Ut lacinia ultrices iaculis. Donec sit amet urna quis erat pretium gravida. Suspendisse scelerisque, lectus semper sagittis viverra, turpis mauris dictum neque, non fermentum magna est vel erat. Praesent id nisi vel quam finibus scelerisque. Quisque placerat, ante nec congue cursus, purus ipsum egestas mi, nec bibendum augue urna et orci. Cras et tristique tortor, eget auctor arcu. Curabitur a sem faucibus, efficitur quam non, venenatis enim.'
-      },
-      position: {
-        lat: -8.044,
-        lng: -34.885
-      }
-    },
-    {
-      content: {
-        title: "Teste 4",
-        body: 'Suspendisse potenti. Quisque non commodo turpis. Duis ac facilisis enim, ut semper justo. In hac habitasse platea dictumst. Aliquam auctor augue et vehicula dictum. Ut eget efficitur dolor. Donec a augue tincidunt, bibendum eros nec, dapibus velit. Donec mattis turpis turpis, ut convallis arcu dignissim quis. Nullam sem erat, semper at efficitur eget, tristique non dolor. Vestibulum nec lacinia ante, in suscipit arcu. Morbi sollicitudin ultricies placerat.'
-      },
-      position: {
-        lat: -8.044,
-        lng: -34.9
-      }
+  firebaseWrapper.getMarketsDefinitions().then((marketsDefinition) => {
+
+    for (let i = 0; i < marketsDefinition.length; i++) {
+      const element = marketsDefinition[i];
+
+      createMarket(element, map);
     }
-  ];
-
-  for (let i = 0; i < marketsDefinition.length; i++) {
-    const element = marketsDefinition[i];
-
-    createMarket(element, map);
-  }
+    
+  });
 }
 
 function createMarket(marketData, map) {
