@@ -1,0 +1,35 @@
+#map_body {
+  margin-right: 0px !important;
+}
+
+#map_parent {
+  padding-right: 0px !important;
+}
+
+#nav_bar_body {
+  margin-top: 25px;
+}
+
+.navbar {
+  min-height: 100px;
+}
+
+.page-footer {
+  padding: 10px;
+}
+
+.jumbotron {
+  margin-top: 70px;
+  padding-bottom: 10px !important;
+  margin-bottom: 0px !important;
+}
+
+.blog-footer {
+  padding: 20px 0;
+  color: #999;
+  text-align: center;
+  background-color: #f9f9f9;
+  border-top: 1px solid #e5e5e5;
+  bottom: 0px;
+}
+
