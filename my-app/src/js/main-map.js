@@ -225,23 +225,114 @@ function initMap() {
 
 function initMarkets(map) {
   firebaseWrapper.getMarketsDefinitions().then((marketsDefinition) => {
-
+    var markets = [];
     for (let i = 0; i < marketsDefinition.length; i++) {
       const element = marketsDefinition[i];
 
-      createMarket(element, map);
+      var market = createMarket(element, map);
+      markets.push(market);
     }
-    
+
+    setRoutes(map, markets);
   });
 }
 
+function setRoutes(map, markets) {
+  var combinations = _makeCombinations(markets);
+
+  combinations.forEach(tuple => {
+    var directionsRenderer = new google.maps.DirectionsRenderer({
+      polylineOptions: {
+        strokeColor: "red"
+      },
+      suppressMarkers: true
+    });
+
+    const directionsService = new google.maps.DirectionsService;
+    directionsRenderer.setMap(map);
+
+    var origin = {
+      lat: tuple.origin.position.lat(),
+      lng: tuple.origin.position.lng(),
+    };
+
+    var destination = {
+      lat: tuple.destination.position.lat(),
+      lng: tuple.destination.position.lng(),
+    };
+
+    directionsService.route({
+      origin: origin,
+      destination: destination,
+      waypoints: [],
+      optimizeWaypoints: true,
+      travelMode: google.maps.DirectionsTravelMode.WALKING
+    }, (response, status) => {
+      if (status === 'OK') {
+        directionsRenderer.setDirections(response);
+      } else {
+        console.log('Directions request failed due to ' + status);
+        console.log(tuple);
+      }
+    });
+  });
+}
+
+function _makeCombinations(markets) {
+  var combinations = [];
+
+  for (let i = 0; i < markets.length - 1; i++) {
+    for (let j = i + 1; j < markets.length; j++) {
+      var newOrigin = markets[i];
+      var newDestination = markets[j];
+
+      var filtered = combinations.filter(function (element) {
+        return (element.origin === newOrigin && element.Destination === newDestination) || element.origin === newDestination && element.Destination === newOrigin;
+      }).length > 0;
+
+      if (!filtered) {
+        combinations.push({
+          origin: newOrigin,
+          destination: newDestination
+        });
+      }
+    }
+  }
+
+  return combinations
+}
+
 function createMarket(marketData, map) {
-  var marker = new google.maps.Marker({
+
+  var def = {
     position: marketData.position,
     map: map
-  });
+  }
+
+  def = checkUpdateIcon(def, marketData)
+
+  var marker = new google.maps.Marker(def);
 
   attachMessage(marker, marketData.content);
+  return marker;
+}
+
+function checkUpdateIcon(def, marketData) {
+  var icon = marketData.icon;
+
+  if (icon) {
+    if (icon.color) {
+      def.icon = {
+        url: "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + icon.color
+      }
+    } else if (icon.sprite) {
+      def.icon = {
+        url: icon.sprite
+      }
+    }
+  }
+
+  return def;
 }
 
 function attachMessage(marker, content) {

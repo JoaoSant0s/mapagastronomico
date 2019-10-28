@@ -28,4 +28,18 @@ class FirebaseWrapper {
       }
     });
   }
+
+  getMarketIconByType(type){
+      return new Promise((resolve, reject) => {
+        try {
+          firebase.database().ref('marketsIcons/' + type).once('value').then(function (marketsDefinition) {
+            let result = marketsDefinition.val() || [];
+            resolve(result);
+          })
+        } catch (error) {
+          console.log(error);
+          resolve([]);
+        }
+      });
+  }
 }
