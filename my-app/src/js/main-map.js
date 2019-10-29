@@ -305,7 +305,7 @@ function _makeCombinations(markets) {
 function createMarket(marketData, map) {
 
   var def = {
-    position: marketData.position,
+    position: marketData.location.position,
     map: map
   }
 
