@@ -1,4 +1,4 @@
-var defaultContent = '<div id="content"><h1 id="firstHeading" class="firstHeading"> {0} </h1> <div id="bodyContent"> {1} </div></div>';
+var defaultContent = '<div> <h2>{0} <img src={1} alt="Smiley face" width="200"> </h2> <div> {2} </div> </div>';
 var infowindows = [];
 
 var firebaseWrapper = new FirebaseWrapper();
@@ -19,7 +19,7 @@ function init() {
 
   setMapHeight();
 
-  initMarkets(map);
+  initMarkers(map);
 }
 
 function setMapHeight() {
@@ -35,11 +35,7 @@ function setMapHeight() {
 }
 
 function initMap() {
-  var uluru = {
-    lat: -8.05428,
-    lng: -34.8813
-  };
-  var zoom = 14;
+  var zoom = 12;
 
   var styles = [{
       "elementType": "geometry",
@@ -210,7 +206,6 @@ function initMap() {
 
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: zoom,
-    center: uluru,
     styles: styles,
     streetViewControl: false,
     mapTypeControl: false,
@@ -223,22 +218,54 @@ function initMap() {
   return map;
 }
 
-function initMarkets(map) {
-  firebaseWrapper.getMarketsDefinitions().then((marketsDefinition) => {
-    var markets = [];
-    for (let i = 0; i < marketsDefinition.length; i++) {
-      const element = marketsDefinition[i];
+function initMarkers(map) {
+  firebaseWrapper.getMarkersDefinitions().then((markersDefinition) => {
 
-      var market = createMarket(element, map);
-      markets.push(market);
-    }
+    var markers = createMarkers(markersDefinition, map);
 
-    setRoutes(map, markets);
+    var clusters = MakeClusterer(markersDefinition, markers);
+
+    clusters = Object.values(clusters);
+
+    clusters.forEach(group => {
+      if (group.length > 1) {
+        setRoutes(map, group);
+      }
+    });
   });
 }
 
-function setRoutes(map, markets) {
-  var combinations = _makeCombinations(markets);
+function createMarkers(markersDefinition, map) {
+  var markers = [];
+  for (let i = 0; i < markersDefinition.length; i++) {
+    const element = markersDefinition[i];
+
+    var marker = createMarker(element, map);
+    markers.push(marker);
+  }
+  return markers;
+}
+
+function MakeClusterer(markersDefinition, markers) {
+  var cluster = {};
+
+  for (let i = 0; i < markersDefinition.length; i++) {
+    const element = markersDefinition[i].location;
+
+    var key = element.city + "_" + element.neighborhood;
+
+    if (cluster.hasOwnProperty(key)) {
+      cluster[key].push(markers[i]);
+    } else {
+      cluster[key] = [markers[i]];
+    }
+  }
+
+  return cluster;
+}
+
+function setRoutes(map, markers) {
+  var combinations = _makeCombinations(markers);
 
   combinations.forEach(tuple => {
     var directionsRenderer = new google.maps.DirectionsRenderer({
@@ -278,13 +305,13 @@ function setRoutes(map, markets) {
   });
 }
 
-function _makeCombinations(markets) {
+function _makeCombinations(markers) {
   var combinations = [];
 
-  for (let i = 0; i < markets.length - 1; i++) {
-    for (let j = i + 1; j < markets.length; j++) {
-      var newOrigin = markets[i];
-      var newDestination = markets[j];
+  for (let i = 0; i < markers.length - 1; i++) {
+    for (let j = i + 1; j < markers.length; j++) {
+      var newOrigin = markers[i];
+      var newDestination = markers[j];
 
       var filtered = combinations.filter(function (element) {
         return (element.origin === newOrigin && element.Destination === newDestination) || element.origin === newDestination && element.Destination === newOrigin;
@@ -302,23 +329,23 @@ function _makeCombinations(markets) {
   return combinations
 }
 
-function createMarket(marketData, map) {
+function createMarker(markerData, map) {
 
   var def = {
-    position: marketData.location.position,
+    position: markerData.location.position,
     map: map
   }
 
-  def = checkUpdateIcon(def, marketData)
+  def = checkUpdateIcon(def, markerData)
 
   var marker = new google.maps.Marker(def);
 
-  attachMessage(marker, marketData.content);
+  attachMessage(marker, markerData.content);
   return marker;
 }
 
-function checkUpdateIcon(def, marketData) {
-  var icon = marketData.icon;
+function checkUpdateIcon(def, markerData) {
+  var icon = markerData.icon;
 
   if (icon) {
     if (icon.color) {
@@ -337,7 +364,7 @@ function checkUpdateIcon(def, marketData) {
 
 function attachMessage(marker, content) {
   var infowindow = new google.maps.InfoWindow({
-    content: defaultContent.format(content.title, content.body)
+    content: defaultContent.format(content.title, content.img, content.body)
   });
   infowindows.push(infowindow);
 

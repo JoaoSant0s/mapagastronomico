@@ -15,7 +15,7 @@ class FirebaseWrapper {
     firebase.initializeApp(firebaseConfig);
   }
 
-  getMarketsDefinitions() {
+  getMarkersDefinitions() {
     return new Promise((resolve, reject) => {
       try {
         firebase.database().ref('marketsDefinition').once('value').then(function (marketsDefinition) {
