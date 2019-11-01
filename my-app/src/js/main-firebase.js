@@ -15,10 +15,10 @@ class FirebaseWrapper {
     firebase.initializeApp(firebaseConfig);
   }
 
-  getMarkersDefinitions() {
+  getFoodSpaces() {
     return new Promise((resolve, reject) => {
       try {
-        firebase.database().ref('marketsDefinition').once('value').then(function (marketsDefinition) {
+        firebase.database().ref('food_spaces').once('value').then(function (marketsDefinition) {
           let result = marketsDefinition.val() || [];
           resolve(result);
         })
@@ -27,5 +27,33 @@ class FirebaseWrapper {
         resolve([]);
       }
     });
-  }  
+  } 
+  
+  getAreasLimitations() {
+    return new Promise((resolve, reject) => {
+      try {
+        firebase.database().ref('areas_limitation').once('value').then(function (areasLimitation) {
+          let result = areasLimitation.val() || [];
+          resolve(result);
+        })
+      } catch (error) {
+        console.log(error);
+        resolve([]);
+      }
+    });
+  }
+
+  getMonuments() {
+    return new Promise((resolve, reject) => {
+      try {
+        firebase.database().ref('monuments_references').once('value').then(function (monuments) {
+          let result = monuments.val() || [];
+          resolve(result);
+        })
+      } catch (error) {
+        console.log(error);
+        resolve([]);
+      }
+    });
+  }
 }

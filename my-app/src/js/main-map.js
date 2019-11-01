@@ -17,9 +17,46 @@ if (!String.prototype.format) {
 function init() {
   var map = initMap();
 
+  initGeoLocation(map);
+
   setMapHeight();
 
-  initMarkers(map);
+  initShapes(map);
+
+  initFoodSpaces(map);
+
+  initMonuments(map);
+}
+
+function initGeoLocation(map) {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (position) {
+
+      var position = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      }
+
+      var def = {
+        position: position,
+        map: map,
+        icon: {
+          url: "https://storage.googleapis.com/my-project-icons/user-icon.png"
+        }
+      }
+
+      var marker = new google.maps.Marker(def);      
+    }, function () {
+      handleLocationError(true);
+    });
+  } else {
+    // Browser doesn't support Geolocation
+    handleLocationError(false);
+  }
+}
+
+function handleLocationError(browserHasGeolocation) {
+  console.log("Error: " + browserHasGeolocation);
 }
 
 function setMapHeight() {
@@ -37,7 +74,13 @@ function setMapHeight() {
 function initMap() {
   var zoom = 12;
 
-  var styles = [{
+  var center = {
+    lat: -8.0151249,
+    lng: -34.8503641
+  }
+
+  var styles = [
+    {
       "elementType": "geometry",
       "stylers": [{
         "color": "#ebe3cd"
@@ -206,6 +249,7 @@ function initMap() {
 
   var map = new google.maps.Map(document.getElementById('map'), {
     zoom: zoom,
+    center: center,
     styles: styles,
     streetViewControl: false,
     mapTypeControl: false,
@@ -218,12 +262,34 @@ function initMap() {
   return map;
 }
 
-function initMarkers(map) {
-  firebaseWrapper.getMarkersDefinitions().then((markersDefinition) => {
+function initShapes(map) {
+  firebaseWrapper.getAreasLimitations().then((areasLimitation) => {
+    areasLimitation.forEach(area => {
+      console.log(area)
+      createPolygon(map, area);
+    });
+  });
+}
 
-    var markers = createMarkers(markersDefinition, map);
+function createPolygon(map, area) {
+  var areaPolygon = new google.maps.Polygon({
+    paths: area.paths,
+    strokeColor: area.strokeColor,
+    strokeOpacity: area.strokeOpacity,
+    strokeWeight: area.strokeWeight,
+    fillColor: area.fillColor,
+    fillOpacity: area.fillOpacity
+  });
 
-    var clusters = MakeClusterer(markersDefinition, markers);
+  areaPolygon.setMap(map);
+}
+
+function initFoodSpaces(map) {
+  firebaseWrapper.getFoodSpaces().then((foodSpaces) => {
+
+    var markers = createMarkers(foodSpaces, map);
+
+    var clusters = SetClusterers(foodSpaces, markers);
 
     clusters = Object.values(clusters);
 
@@ -232,6 +298,12 @@ function initMarkers(map) {
         setRoutes(map, group);
       }
     });
+  });
+}
+
+function initMonuments(map) {
+  firebaseWrapper.getMonuments().then((monuments) => {
+    createMarkers(monuments, map);
   });
 }
 
@@ -246,13 +318,13 @@ function createMarkers(markersDefinition, map) {
   return markers;
 }
 
-function MakeClusterer(markersDefinition, markers) {
+function SetClusterers(markersDefinition, markers) {
   var cluster = {};
 
   for (let i = 0; i < markersDefinition.length; i++) {
     const element = markersDefinition[i].location;
 
-    var key = element.city + "_" + element.neighborhood;
+    var key = element.group + "";
 
     if (cluster.hasOwnProperty(key)) {
       cluster[key].push(markers[i]);
@@ -270,7 +342,9 @@ function setRoutes(map, markers) {
   combinations.forEach(tuple => {
     var directionsRenderer = new google.maps.DirectionsRenderer({
       polylineOptions: {
-        strokeColor: "red"
+        strokeColor: "#2249a3",
+        strokeOpacity: 0.9,
+        strokeWeight: 5
       },
       suppressMarkers: true
     });
@@ -332,7 +406,7 @@ function _makeCombinations(markers) {
 function createMarker(markerData, map) {
 
   var def = {
-    position: markerData.location.position,
+    position: markerData.location,
     map: map
   }
 
