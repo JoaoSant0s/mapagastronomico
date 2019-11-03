@@ -1,4 +1,5 @@
-var defaultContent = '<div> <h2>{0} <img src={1} alt="Smiley face" width="200"> </h2> <div> {2} </div> </div>';
+var defaultContent = '<div> <h2>{0} <img src={1} width="200"> </h2> <div> {2} </div> </div>';
+var restaurantModal = "<div class='modal fade' id='mymodal' tabindex='-1' role='dialog' aria-labelledby='mymodalLabel' aria-hidden='true'> <div class='modal-dialog modal-ku' role='document'> <div class='modal-content'> <div class='modal-header'> <h2 class='modal-title' id='mymodalLabel'>{0}</h2> <button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span> </button> </div> <div class='modal-body'> <div class='container'> <div class='row'> <div class='col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12'><img src={1} alt='Smiley face' width='200'></div> </div> <div class='row'> <div class='col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12'>{2}</div> </div> </div> </div> <div class='modal-footer'> <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>  </div> </div> </div> </div>";
 var infowindows = [];
 
 var firebaseWrapper = new FirebaseWrapper();
@@ -15,17 +16,19 @@ if (!String.prototype.format) {
 }
 
 function init() {
-  var map = initMap();
+  jQuery(document).ready(function () {
+    var map = initMap();
 
-  initGeoLocation(map);
+    initGeoLocation(map);
 
-  setMapHeight();
+    setMapHeight();
 
-  initShapes(map);
+    initShapes(map);
 
-  initFoodSpaces(map);
+    initFoodSpaces(map);
 
-  initMonuments(map);
+    initMonuments(map);
+  });  
 }
 
 function initGeoLocation(map) {
@@ -45,7 +48,7 @@ function initGeoLocation(map) {
         }
       }
 
-      var marker = new google.maps.Marker(def);      
+      var marker = new google.maps.Marker(def);
     }, function () {
       handleLocationError(true);
     });
@@ -265,7 +268,6 @@ function initMap() {
 function initShapes(map) {
   firebaseWrapper.getAreasLimitations().then((areasLimitation) => {
     areasLimitation.forEach(area => {
-      console.log(area)
       createPolygon(map, area);
     });
   });
@@ -287,7 +289,7 @@ function createPolygon(map, area) {
 function initFoodSpaces(map) {
   firebaseWrapper.getFoodSpaces().then((foodSpaces) => {
 
-    var markers = createMarkers(foodSpaces, map);
+    var markers = createMarkers(foodSpaces, map, true);
 
     var clusters = SetClusterers(foodSpaces, markers);
 
@@ -303,16 +305,16 @@ function initFoodSpaces(map) {
 
 function initMonuments(map) {
   firebaseWrapper.getMonuments().then((monuments) => {
-    createMarkers(monuments, map);
+    createMarkers(monuments, map, false);
   });
 }
 
-function createMarkers(markersDefinition, map) {
+function createMarkers(markersDefinition, map, complete) {
   var markers = [];
   for (let i = 0; i < markersDefinition.length; i++) {
     const element = markersDefinition[i];
 
-    var marker = createMarker(element, map);
+    var marker = createMarker(element, map, complete);
     markers.push(marker);
   }
   return markers;
@@ -403,7 +405,7 @@ function _makeCombinations(markers) {
   return combinations
 }
 
-function createMarker(markerData, map) {
+function createMarker(markerData, map, complete) {
 
   var def = {
     position: markerData.location,
@@ -414,7 +416,7 @@ function createMarker(markerData, map) {
 
   var marker = new google.maps.Marker(def);
 
-  attachMessage(marker, markerData.content);
+  attachContent(marker, markerData.content, complete);
   return marker;
 }
 
@@ -436,7 +438,24 @@ function checkUpdateIcon(def, markerData) {
   return def;
 }
 
-function attachMessage(marker, content) {
+function attachContent(marker, content, complete) {
+  if (complete) {
+    createRestaurantContent(marker, content);
+  } else {
+    createMonumentContent(marker, content);
+  }
+}
+
+function createRestaurantContent(marker, content) {
+  marker.addListener('click', function () {
+    var newContent = restaurantModal.format(content.title, content.img, content.body)
+    $("#mymodal").replaceWith(newContent);
+
+    $('#mymodal').modal('toggle');
+  });
+}
+
+function createMonumentContent(marker, content) {
   var infowindow = new google.maps.InfoWindow({
     content: defaultContent.format(content.title, content.img, content.body)
   });
@@ -447,6 +466,7 @@ function attachMessage(marker, content) {
       const element = infowindows[i];
       element.close();
     }
+
     infowindow.open(marker.get('map'), marker);
     fixInfoWindowCloseButton();
   });

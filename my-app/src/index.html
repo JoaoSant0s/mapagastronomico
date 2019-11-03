@@ -14,6 +14,9 @@
   <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.2.2/firebase-database.js"></script>
 
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
   <script type="text/javascript" src="js/main-firebase.js"></script>
   <script type="text/javascript" src="js/main-map.js"></script>
 
@@ -33,7 +36,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button>
+          </button>          
           <a class="navbar-brand" href="#">Mapa Gastronômico</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse navbar-right">
@@ -63,6 +66,9 @@
       </div>
     </nav>
 
+    <!-- Modal -->
+    <div class='modal fade' id='mymodal' tabindex='-1' role='dialog' aria-labelledby='mymodalLabel'aria-hidden='true'></div>
+
     <div class="jumbotron">
       <!-- Example row of columns -->
       <div class="row text-center" id="map_body">
@@ -79,8 +85,7 @@
     <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBBZSOY_Y788vVIoaa0v3uVjPL6_-NNUzc&callback=init"></script>
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
@@ -88,6 +93,7 @@
 
 
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/style-model.css">    
   </app-root>
 </body>
 

@@ -18,6 +18,10 @@
   padding: 10px;
 }
 
+.modal-title {
+  display: inline;
+}
+
 .jumbotron {
   margin-top: 70px;
   padding-bottom: 10px !important;
@@ -32,4 +36,3 @@
   border-top: 1px solid #e5e5e5;
   bottom: 0px;
 }
-
