@@ -1,8 +1,8 @@
-var defaultContent = '<div> <h2>{0} <img src={1} width="200"> </h2> <div> {2} </div> </div>';
-var restaurantModal = "<div class='modal fade' id='mymodal' tabindex='-1' role='dialog' aria-labelledby='mymodalLabel' aria-hidden='true'> <div class='modal-dialog modal-ku' role='document'> <div class='modal-content'> <div class='modal-header'> <h2 class='modal-title' id='mymodalLabel'>{0}</h2> <button type='button' class='close' data-dismiss='modal' aria-label='Close'> <span aria-hidden='true'>&times;</span> </button> </div> <div class='modal-body'> <div class='container'> <div class='row'> <div class='col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12'><img src={1} alt='Smiley face' width='200'></div> </div> <div class='row'> <div class='col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12'>{2}</div> </div> </div> </div> <div class='modal-footer'> <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>  </div> </div> </div> </div>";
 var infowindows = [];
 
 var firebaseWrapper = new FirebaseWrapper();
+
+var modalBuilder = new ModalBuilder();
 
 if (!String.prototype.format) {
   String.prototype.format = function () {
@@ -28,7 +28,7 @@ function init() {
     initFoodSpaces(map);
 
     initMonuments(map);
-  });  
+  });
 }
 
 function initGeoLocation(map) {
@@ -448,8 +448,12 @@ function attachContent(marker, content, complete) {
 
 function createRestaurantContent(marker, content) {
   marker.addListener('click', function () {
-    var newContent = restaurantModal.format(content.title, content.img, content.body)
+    var newContent = modalBuilder.CreateModal(content);
     $("#mymodal").replaceWith(newContent);
+
+    $('.carousel').carousel({
+      interval: false
+    });
 
     $('#mymodal').modal('toggle');
   });
@@ -457,7 +461,7 @@ function createRestaurantContent(marker, content) {
 
 function createMonumentContent(marker, content) {
   var infowindow = new google.maps.InfoWindow({
-    content: defaultContent.format(content.title, content.img, content.body)
+    content: modalBuilder.CreateInfoWindow(content)
   });
   infowindows.push(infowindow);
 

@@ -16,7 +16,8 @@
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
+  
+  <script type="text/javascript" src="js/modal-builder.js"></script>
   <script type="text/javascript" src="js/main-firebase.js"></script>
   <script type="text/javascript" src="js/main-map.js"></script>
 
@@ -36,7 +37,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
-          </button>          
+          </button>
           <a class="navbar-brand" href="#">Mapa Gastronômico</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse navbar-right">
@@ -67,7 +68,26 @@
     </nav>
 
     <!-- Modal -->
-    <div class='modal fade' id='mymodal' tabindex='-1' role='dialog' aria-labelledby='mymodalLabel'aria-hidden='true'></div>
+    <div class='modal fade' id='mymodal' tabindex='-1' role='dialog' aria-labelledby='mymodalLabel' aria-hidden='true'>
+      <div class='modal-dialog modal-lg' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h2 class='modal-title' id='mymodalLabel'>{0}</h2> <button type='button' class='close' data-dismiss='modal'
+              aria-label='Close'> <span aria-hidden='true'>&times;</span> </button>
+          </div>
+          <div class='modal-body'>
+            <div class='row custom-images'>
+              <div class='col-5 col-sm-5 col-md-5 col-lg-5 col-xl-5 col-xs-5 col-centered'> {1} </div>
+            </div>
+            <div class='row custom-description'>
+              <div class='col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xs-12'>{2}</div>
+            </div>
+          </div>
+          <div class='modal-footer'> <button type='button' class='btn btn-secondary' data-dismiss='modal'>Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <div class="jumbotron">
       <!-- Example row of columns -->
@@ -85,7 +105,7 @@
     <script async defer
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBBZSOY_Y788vVIoaa0v3uVjPL6_-NNUzc&callback=init"></script>
 
-    
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
       integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
@@ -93,7 +113,7 @@
 
 
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/style-model.css">    
+    <link rel="stylesheet" href="css/style-model.css">
   </app-root>
 </body>
 
