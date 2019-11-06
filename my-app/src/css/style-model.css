@@ -11,10 +11,22 @@
   margin: 0 auto;
 }
 
-.custom-images {
-
-}
-
-.custom-description{
+.custom-descriptions {
   margin-top: 30px;
 }
+ 
+.custom-address,
+.custom-categories,
+.custom-contacts,
+.custom-site,
+.custom-images,
+.custom-operation,
+.custom-social {
+  margin-top: 10px;
+}
+
+.custom-social a{
+  margin-right: 10px;
+}
+
+
